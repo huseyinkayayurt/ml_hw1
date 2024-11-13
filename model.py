@@ -60,7 +60,7 @@ class LogisticRegression:
         y_pred = np.clip(y_pred, epsilon, 1 - epsilon)
         return -np.mean(y_true * np.log(y_pred) + (1 - y_true) * np.log(1 - y_pred))
 
-    def fit(self, X, y, epochs=1000):
+    def fit(self, X_train, y_train, X_val, y_val, epochs=1000):
         """
         Modeli stochastic gradient descent ile eğitir.
 
@@ -72,28 +72,58 @@ class LogisticRegression:
         Çıkış:
         Eğitim sürecindeki cross-entropy loss değerlerinin listesi
         """
-        n_samples, n_features = X.shape
-        self.weights = np.zeros(n_features)  # Ağırlıkları başlatma
-        losses = []
+        n_samples, n_features = X_train.shape
+        self.weights = np.zeros(n_features)
+        self.bias = 0
+
+        train_losses = []
+        val_losses = []
 
         # Eğitim döngüsü
         for epoch in range(epochs):
-            for idx, x_i in enumerate(X):
+            for idx, x_i in enumerate(X_train):
                 linear_model = np.dot(x_i, self.weights) + self.bias
                 y_pred = self.sigmoid(linear_model)
 
                 # Ağırlık güncelleme (SGD)
-                update = (y_pred - y[idx])
+                update = (y_pred - y_train[idx])
                 self.weights -= self.lr * update * x_i
                 self.bias -= self.lr * update
 
-            # Her epoch sonunda ortalama loss değeri hesapla
-            y_pred = self.predict_proba(X)
-            loss = self.compute_loss(y, y_pred)
-            losses.append(loss)
+            # Eğitim seti için tahmin ve loss hesaplama
+            y_pred_train = self.predict_proba(X_train)
+            train_loss = self.compute_loss(y_train, y_pred_train)
+            train_losses.append(train_loss)
 
-            # Ara sonuçları gözlemlemek için her 100 epoch sonunda loss değeri yazdırılabilir
+            # Doğrulama seti için tahmin ve loss hesaplama
+            y_pred_val = self.predict_proba(X_val)
+            val_loss = self.compute_loss(y_val, y_pred_val)
+            val_losses.append(val_loss)
+
+
+            # Her 100 epoch'ta loss değerlerini yazdırma
             if (epoch + 1) % 100 == 0:
-                print(f"Epoch {epoch + 1}/{epochs} - Loss: {loss:.4f}")
+                print(f"Epoch {epoch + 1}/{epochs} - Eğitim Loss: {train_loss:.4f}, Doğrulama Loss: {val_loss:.4f}")
 
-        return losses
+        return train_losses, val_losses
+
+        # for epoch in range(epochs):
+        #     for idx, x_i in enumerate(X):
+        #         linear_model = np.dot(x_i, self.weights) + self.bias
+        #         y_pred = self.sigmoid(linear_model)
+        #
+        #         # Ağırlık güncelleme (SGD)
+        #         update = (y_pred - y[idx])
+        #         self.weights -= self.lr * update * x_i
+        #         self.bias -= self.lr * update
+        #
+        #     # Her epoch sonunda ortalama loss değeri hesapla
+        #     y_pred = self.predict_proba(X)
+        #     loss = self.compute_loss(y, y_pred)
+        #     losses.append(loss)
+        #
+        #     # Ara sonuçları gözlemlemek için her 100 epoch sonunda loss değeri yazdırılabilir
+        #     if (epoch + 1) % 500 == 0:
+        #         print(f"Epoch {epoch + 1}/{epochs} - Loss: {loss:.4f}")
+        #
+        # return losses

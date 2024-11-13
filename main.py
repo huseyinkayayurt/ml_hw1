@@ -14,12 +14,11 @@ def main():
     # Modeli başlat ve eğit
     print("Model eğitimi başlıyor...")
     model = LogisticRegression(lr=0.001)
-    epoch_losses = model.fit(X_train, y_train, epochs=4500)
+    train_losses, val_losses = model.fit(X_train, y_train, X_val, y_val, epochs=5000)
     print("Model eğitimi tamamlandı.")
 
-    # Loss grafiğini kaydet
-    plot_loss(epoch_losses, filename="average_loss_curve.png")
-    print("Eğitim sürecindeki kayıp grafiği 'average_loss_curve.png' dosyasına kaydedildi.")
+    # Eğitim ve doğrulama loss grafiğini kaydet
+    plot_loss(train_losses, val_losses, filename="loss_curve.png")
 
     # Eğitim, doğrulama ve test setleri için metrikleri hesapla ve yazdır
     calculate_and_print_metrics(model, X_train, y_train, set_name="Eğitim Seti")
