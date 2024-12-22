@@ -44,6 +44,6 @@ build/
 .idea/
 
 # Additional Files
-average_loss_curve.png
 hw1Data.txt
 training_data_distribution.png
+loss_curve.png

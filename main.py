@@ -1,7 +1,9 @@
 from dataset import load_and_split_data
 from visualization import plot_data,plot_loss
 from model import LogisticRegression
-from calculate import calculate_and_print_metrics
+from calculate import calculate_metrics
+from tabulate import tabulate
+
 
 def main():
     # Veriyi yükle ve eğitim, doğrulama, test setlerine böl
@@ -14,16 +16,27 @@ def main():
     # Modeli başlat ve eğit
     print("Model eğitimi başlıyor...")
     model = LogisticRegression(lr=0.001)
-    train_losses, val_losses = model.fit(X_train, y_train, X_val, y_val, epochs=5000)
+    train_losses, val_losses = model.fit(X_train, y_train, X_val, y_val, epochs=5500)
     print("Model eğitimi tamamlandı.")
 
     # Eğitim ve doğrulama loss grafiğini kaydet
     plot_loss(train_losses, val_losses, filename="loss_curve.png")
 
-    # Eğitim, doğrulama ve test setleri için metrikleri hesapla ve yazdır
-    calculate_and_print_metrics(model, X_train, y_train, set_name="Eğitim Seti")
-    calculate_and_print_metrics(model, X_val, y_val, set_name="Doğrulama Seti")
-    calculate_and_print_metrics(model, X_test, y_test, set_name="Test Seti")
+
+    # Eğitim, doğrulama ve test setleri için metrikleri hesapla
+    train_metrics = calculate_metrics(model, X_train, y_train)
+    val_metrics = calculate_metrics(model, X_val, y_val)
+    test_metrics = calculate_metrics(model, X_test, y_test)
+
+    # Tabloda metrikleri göster
+    headers = ["Veri Seti", "Accuracy", "Precision", "Recall", "F1-Score"]
+    table = [
+        ["Eğitim Seti", train_metrics["Accuracy"], train_metrics["Precision"], train_metrics["Recall"], train_metrics["F1-Score"]],
+        ["Doğrulama Seti", val_metrics["Accuracy"], val_metrics["Precision"], val_metrics["Recall"], val_metrics["F1-Score"]],
+        ["Test Seti", test_metrics["Accuracy"], test_metrics["Precision"], test_metrics["Recall"], test_metrics["F1-Score"]],
+    ]
+    print("\nModel Performansı:")
+    print(tabulate(table, headers=headers, tablefmt="grid"))
 
 
 if __name__ == "__main__":

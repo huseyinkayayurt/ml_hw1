@@ -7,6 +7,7 @@ def plot_data(X, y,filename=None):
     Parametreler:
     X -- Özellikler (sınav notları)
     y -- Hedef değişken (kabul durumu)
+    filename -- Grafik dosyasının adı (string)
     """
     # Sınıf 0 olan örnekleri mavi, sınıf 1 olan örnekleri yeşil ile göster
     plt.scatter(X[y == 0][:, 0], X[y == 0][:, 1], color='blue', label="Reddedilen (0)")

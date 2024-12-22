@@ -38,6 +38,7 @@ class LogisticRegression:
 
         Parametre:
         X -- Özellikler matrisi
+        threshold -- Eşik değeri
 
         Çıkış:
         Tahmin edilen sınıflar
@@ -107,23 +108,3 @@ class LogisticRegression:
 
         return train_losses, val_losses
 
-        # for epoch in range(epochs):
-        #     for idx, x_i in enumerate(X):
-        #         linear_model = np.dot(x_i, self.weights) + self.bias
-        #         y_pred = self.sigmoid(linear_model)
-        #
-        #         # Ağırlık güncelleme (SGD)
-        #         update = (y_pred - y[idx])
-        #         self.weights -= self.lr * update * x_i
-        #         self.bias -= self.lr * update
-        #
-        #     # Her epoch sonunda ortalama loss değeri hesapla
-        #     y_pred = self.predict_proba(X)
-        #     loss = self.compute_loss(y, y_pred)
-        #     losses.append(loss)
-        #
-        #     # Ara sonuçları gözlemlemek için her 100 epoch sonunda loss değeri yazdırılabilir
-        #     if (epoch + 1) % 500 == 0:
-        #         print(f"Epoch {epoch + 1}/{epochs} - Loss: {loss:.4f}")
-        #
-        # return losses
